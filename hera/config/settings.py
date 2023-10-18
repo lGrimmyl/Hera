@@ -40,11 +40,14 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
+    'corsheaders',
+    'accounts'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -135,9 +138,23 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': True,
     'SEND_CONFIRMATION_EMAIL': True,
     'ACTIVATION_URL': 'activation/{uid}/{token}',
+    'SERIALIZERS' : {
+        'user_create': 'accounts.serializers.CitizenUserCreateSerializer'
+    } 
 }
 
 EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
-EMAIL_HOST_USER = 'e33a69696a0502'
-EMAIL_HOST_PASSWORD = '********2f05'
+EMAIL_HOST_USER = '7cbb65951f7637'
+EMAIL_HOST_PASSWORD = 'f6fccccdb1be39'
 EMAIL_PORT = '2525'
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://localhost:8000'
+
+]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media/'
+
+AUTH_USER_MODEL = 'accounts.CustomUser'
