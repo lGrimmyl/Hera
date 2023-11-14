@@ -30,7 +30,6 @@ class CitizenUserCreateSerializer(UserCreateSerializer):
     class Meta:
         model = User
         fields = tuple(User.REQUIRED_FIELDS) + (
-            settings.LOGIN_FIELD,
             settings.USER_ID_FIELD,
             "password",
             "first_name",
@@ -48,7 +47,28 @@ class CitizenUserCreateSerializer(UserCreateSerializer):
             "Valid_ID",
         )
 
+    def clean_user_data(self, validated_data):
+        return{
+            'first_name' : validated_data.get('first_name',''),
+            'middle_name' : validated_data.get('middle_name',''),
+            'last_name' : validated_data.get('last_name',''),
+            'email' : validated_data.get('email',''),
+            'birthdate' : validated_data.get('birthdate',''),
+            'gender' : validated_data.get('gender',''),
+            'username' : validated_data.get('email',''),
+            'password' : validated_data.get('password',''),
+            'contact_number' : validated_data.get('contact_number',''),
+            'citizenship' : validated_data.get('citizenship',''),
+            'placeofbirth' : validated_data.get('placeofbirth',''),
+            'address' : validated_data.get('address',''),
+            'highesteducationattainment' : validated_data.get('highesteducationattainment',''),
+            'occupation' : validated_data.get('occupation',''),
+            'Valid_ID' : validated_data.get('Valid_ID',''),
+
+        }
+
     def validate(self, attrs):
+        attrs = self.clean_user_data(attrs)
         user = User(**attrs)
         password = attrs.get("password")
 
@@ -73,6 +93,7 @@ class CitizenUserCreateSerializer(UserCreateSerializer):
     def perform_create(self, validated_data):
         with transaction.atomic():
             user = User.objects.create_user(**validated_data)
+
             if settings.SEND_ACTIVATION_EMAIL:
                 user.is_active = False
                 user.save(update_fields=["is_active"])

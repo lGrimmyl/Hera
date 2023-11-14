@@ -1,6 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+
+
+
 class CustomUser(AbstractUser):
     Valid_ID = models.ImageField(upload_to='photos/', null=True, blank=True)
     middle_name = models.CharField(max_length=255, null=True, blank=True)
