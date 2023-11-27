@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-2wlqx=o^=g*h1=8t8jq00@h!8#%l(p%&6!=#ewqtdjmm36jd*9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost','127.0.0.1','192.168.1.40']
 
 
 # Application definition
@@ -150,9 +150,12 @@ EMAIL_HOST_USER = '7cbb65951f7637'
 EMAIL_HOST_PASSWORD = 'f6fccccdb1be39'
 EMAIL_PORT = '2525'
 
+FRONTEND_URL = 'http://localhost:3000'
+
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
-    'http://localhost:8000'
+    'http://localhost:8081',
+    'http://192.168.1.40'
 
 ]
 
