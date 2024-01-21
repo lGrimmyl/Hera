@@ -1,7 +1,0 @@
-{% for report in incidentreport_list %}
-  <p>{{ report.description }}</p>
-  <p>{{ report.datetime_reported }}</p>
-
-{% empty %}
-  <p>No reports available.</p>
-{% endfor %}

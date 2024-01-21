@@ -6,9 +6,11 @@ from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework import serializers
 from djoser.serializers import UserCreateSerializer
+from incident_reports.serializers import IncidentReportSerializer
 from djoser.conf import settings
 from rest_framework.settings import api_settings
-
+from datetime import date
+from .models import ValidIDType
 User = get_user_model()
 
 
@@ -27,6 +29,11 @@ class CitizenUserCreateSerializer(UserCreateSerializer):
     highesteducationattainment = serializers.CharField(max_length=255, write_only=True)
     occupation = serializers.CharField(max_length=255, write_only=True)
     Valid_ID = serializers.ImageField(required=False)
+    valid_id_type = serializers.PrimaryKeyRelatedField(
+        queryset=ValidIDType.objects.all(), 
+        allow_null=True, 
+        required=False
+    )
     class Meta:
         model = User
         fields = tuple(User.REQUIRED_FIELDS) + (
@@ -45,6 +52,7 @@ class CitizenUserCreateSerializer(UserCreateSerializer):
             "highesteducationattainment",
             "occupation",
             "Valid_ID",
+            "valid_id_type",
         )
 
     def clean_user_data(self, validated_data):
@@ -64,9 +72,10 @@ class CitizenUserCreateSerializer(UserCreateSerializer):
             'highesteducationattainment' : validated_data.get('highesteducationattainment',''),
             'occupation' : validated_data.get('occupation',''),
             'Valid_ID' : validated_data.get('Valid_ID',''),
-
+            'valid_id_type' : validated_data.get('valid_id_type',''),
+            'civil_status' : validated_data.get('civil_status',''),
         }
-
+    
     def validate(self, attrs):
         attrs = self.clean_user_data(attrs)
         user = User(**attrs)
@@ -98,3 +107,32 @@ class CitizenUserCreateSerializer(UserCreateSerializer):
                 user.is_active = False
                 user.save(update_fields=["is_active"])
         return user
+    
+class ReadOnlyUserSerializer(serializers.ModelSerializer):
+    age = serializers.SerializerMethodField()
+    class Meta:
+        model = User
+        fields = [ 'first_name', 'last_name','email','contact_number','gender','address','birthdate','age','civil_status','citizenship','highesteducationattainment','occupation']
+
+    def get_age(self, obj):
+        if obj.birthdate:
+            today = date.today()
+            return today.year - obj.birthdate.year - ((today.month, today.day) < (obj.birthdate.month, obj.birthdate.day))
+        return None
+
+
+class PasswordChangeSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+    def validate_old_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError("Old password is not correct")
+        return value
+
+    def validate_new_password(self, value):
+        validate_password(value, self.context['request'].user)
+        return value
+
+        

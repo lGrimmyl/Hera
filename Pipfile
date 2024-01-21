@@ -8,6 +8,8 @@ django = "*"
 djangorestframework = "*"
 djoser = "*"
 django-cors-headers = "*"
+python-dotenv = "*"
+whitenoise = "*"
 
 [dev-packages]
 
