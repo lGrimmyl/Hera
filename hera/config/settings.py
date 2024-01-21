@@ -33,7 +33,7 @@ DEBUG = False
 ALLOWED_HOSTS = ['localhost','127.0.0.1','192.168.1.40','https://hera-tni7.onrender.com']
 
 CSRF_TRUSTED_ORIGINS = [
-  'https://deployedurlhere.com'
+  'https://hera-tni7.onrender.com'
 ]
 # Application definition
 
