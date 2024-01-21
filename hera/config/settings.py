@@ -30,7 +30,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1','192.168.1.40','hera-tni7.onrender.com']
+ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
   'https://hera-tni7.onrender.com', 'http://hera-tni7.onrender.com'
@@ -172,7 +172,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:8081',
     'http://192.168.1.40',
     'https://hera-tni7.onrender.com'
-
+    
 ]
 
 MEDIA_URL = '/media/'
