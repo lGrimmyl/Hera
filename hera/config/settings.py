@@ -30,7 +30,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1','192.168.1.40']
+ALLOWED_HOSTS = ['localhost','127.0.0.1','192.168.1.40','https://hera-tni7.onrender.com']
 
 CSRF_TRUSTED_ORIGINS = [
   'https://deployedurlhere.com'
@@ -171,6 +171,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:8081',
     'http://192.168.1.40',
+    'https://hera-tni7.onrender.com'
 
 ]
 
