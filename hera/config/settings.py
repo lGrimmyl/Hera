@@ -30,10 +30,10 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1','192.168.1.40','https://hera-tni7.onrender.com']
+ALLOWED_HOSTS = ['localhost','127.0.0.1','192.168.1.40','hera-tni7.onrender.com']
 
 CSRF_TRUSTED_ORIGINS = [
-  'https://hera-tni7.onrender.com'
+  'https://hera-tni7.onrender.com', 'http://hera-tni7.onrender.com'
 ]
 # Application definition
 
