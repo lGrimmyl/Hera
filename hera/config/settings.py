@@ -33,7 +33,7 @@ DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://hera-x3yz.onrender.com', 'https://hera.keannu1.duckdns.org'
+    'https://hera-x3yz.onrender.com', 'https://hera.keannu1.duckdns.org',
 ]
 # Application definition
 
@@ -168,8 +168,8 @@ EMAIL_PORT = '2525'
 FRONTEND_URL = 'http://localhost:3000'
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'http://localhost:8081',
+    'localhost:3000',
+    'exp://192.168.1.40:8081',
     'http://192.168.1.40',
     'https://hera-x3yz.onrender.com'
 
