@@ -171,7 +171,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:8081',
     'http://192.168.1.40',
-    'https://hera-tni7.onrender.com'
+    'https://hera-x3yz.onrender.com'
 
 ]
 
