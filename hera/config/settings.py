@@ -33,7 +33,7 @@ DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://hera-tni7.onrender.com', 'https://hera.keannu1.duckdns.org'
+    'https://hera-x3yz.onrender.com', 'https://hera.keannu1.duckdns.org'
 ]
 # Application definition
 
