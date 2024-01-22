@@ -168,7 +168,7 @@ EMAIL_PORT = '2525'
 FRONTEND_URL = 'http://localhost:3000'
 
 CORS_ALLOWED_ORIGINS = [
-    'localhost:3000',
+    'https://localhost:3000',
     'exp://192.168.1.40:8081',
     'http://192.168.1.40',
     'https://hera-x3yz.onrender.com'
