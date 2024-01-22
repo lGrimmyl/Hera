@@ -33,7 +33,7 @@ DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://hera-x3yz.onrender.com', 'https://hera.keannu1.duckdns.org',
+    'https://hera-x3yz.onrender.com', 'https://hera.keannu1.duckdns.org','http://localhost:3000','exp://192.168.1.40:8081'
 ]
 # Application definition
 
@@ -165,15 +165,10 @@ EMAIL_HOST_USER = '7cbb65951f7637'
 EMAIL_HOST_PASSWORD = 'f6fccccdb1be39'
 EMAIL_PORT = '2525'
 
-FRONTEND_URL = 'http://localhost:3000'
+FRONTEND_URL = 'http://localhost:3000','http://172.24.128.1:3000','exp://192.168.1.40:8081'
 
-CORS_ALLOWED_ORIGINS = [
-    'https://localhost:3000',
-    'exp://192.168.1.40:8081',
-    'http://192.168.1.40',
-    'https://hera-x3yz.onrender.com'
-
-]
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
