@@ -1,8 +1,8 @@
 from django.db import transaction
 from rest_framework import serializers
 from .models import IncidentReport, Suspect, Victim, ChildConflict, IncidentSubcategory,IncidentCategory
-
-
+import filetype
+import json
 
 class SuspectSerializer(serializers.ModelSerializer):
     class Meta:
@@ -33,12 +33,38 @@ class IncidentReportSerializer(serializers.ModelSerializer):
         queryset=IncidentSubcategory.objects.all(),
         required=False
     )
+    jsonData = serializers.CharField(write_only=True, required=False, allow_blank=True)
 
     class Meta:
         model = IncidentReport
-        fields = ['user','is_user_victim','status','id', 'photo', 'description', 'datetime_reported','closed_at', 'narrative','main_category','subcategories', 'suspects', 'victims', 'child_conflicts']
+        fields = ['user','is_user_victim','status','id', 'media', 'description', 'datetime_reported','closed_at', 'narrative','main_category','subcategories', 'suspects', 'victims', 'child_conflicts', 'jsonData']
+        extra_kwargs = {
+            'media': {'required': False}
+        }
+    def validate_media(self, value):
+    # Make sure to read the file (this will be in-memory for uploaded files)
+        file_type = filetype.guess(value)
 
+        if not file_type:
+            raise serializers.ValidationError("Cannot determine file type.")
+
+    # Check if the file's MIME type is allowed
+        allowed_types = ['image/jpeg', 'image/png', 'video/mp4']
+        if file_type.mime not in allowed_types:
+            raise serializers.ValidationError("Unsupported file type.")
+
+    # File size validation remains the same
+        max_file_size = 10 * 1024 * 1024  # 10 MB
+        if value.size > max_file_size:
+            raise serializers.ValidationError("File too large. Size should not exceed 10 MB.")
+
+        return value
     def create(self, validated_data):
+        jsonData = validated_data.pop('jsonData', None)
+        if jsonData:
+            additional_data = json.loads(jsonData)
+            # Process your additional JSON data here. For example, merge it into validated_data
+            validated_data.update(additional_data)
         with transaction.atomic():
             subcategories_data = validated_data.pop('subcategories', [])
             suspects_data = validated_data.pop('suspects', [])

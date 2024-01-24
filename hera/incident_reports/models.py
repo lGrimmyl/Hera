@@ -29,7 +29,8 @@ class IncidentReport(models.Model):
         related_name='incident_reports')
     is_user_victim = models.BooleanField(default=False)
     is_emergency = models.BooleanField(default=False)
-    photo = models.ImageField(upload_to='incident_photos/', blank=True, null=True)
+    media = models.FileField(upload_to='incident_media/', blank=True, null=True)
+    media_url = models.URLField(max_length=1024, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     datetime_reported = models.DateTimeField(auto_now_add=True)
     closed_at = models.DateTimeField(null=True, blank=True)
@@ -51,6 +52,12 @@ class IncidentReport(models.Model):
         choices=STATUS_CHOICES,
         default=OPEN,
     )
+
+    def save(self, *args, **kwargs):
+        if self.media:  # If a file was uploaded
+            self.media_url = self.media.url  # Set the media_url field
+        super(IncidentReport, self).save(*args, **kwargs)
+        
     def save(self, *args, **kwargs):
         if self.status == 'Closed' and self.closed_at is None:
             self.closed_at = timezone.now()
@@ -67,45 +74,45 @@ class IncidentReport(models.Model):
 
 class Suspect(models.Model):
     incident_report = models.ForeignKey(IncidentReport, on_delete=models.CASCADE, related_name='suspects')
-    last_name = models.CharField(max_length=255)
-    first_name = models.CharField(max_length=255)
-    middle_name = models.CharField(max_length=255)
-    affix_name = models.CharField(max_length=255)
-    civil_status = models.CharField(max_length=255)
-    birthdate = models.CharField(max_length=255)
-    gender = models.CharField(max_length=6)
-    contact_number = models.CharField(max_length=255)
-    citizenship = models.CharField(max_length=255)
-    email = models.CharField(max_length=255)
-    address = models.CharField(max_length=255)
-    waddress = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    middle_name = models.CharField(max_length=255, null=True, blank=True)
+    affix_name = models.CharField(max_length=255, null=True, blank=True)
+    civil_status = models.CharField(max_length=255, null=True, blank=True)
+    birthdate = models.CharField(max_length=255, null=True, blank=True)
+    gender = models.CharField(max_length=6, null=True, blank=True)
+    contact_number = models.CharField(max_length=255, null=True, blank=True)
+    citizenship = models.CharField(max_length=255, null=True, blank=True)
+    email = models.CharField(max_length=255, null=True, blank=True)
+    address = models.CharField(max_length=255, null=True, blank=True)
+    waddress = models.CharField(max_length=255, null=True, blank=True)
 
 
 class Victim(models.Model):
     incident_report = models.ForeignKey(IncidentReport, on_delete=models.CASCADE, related_name='victims')
-    last_name = models.CharField(max_length=255)
-    first_name = models.CharField(max_length=255)
-    middle_name = models.CharField(max_length=255)
-    nickname = models.CharField(max_length=255, null = True)
-    civil_status = models.CharField(max_length=255)
-    birthdate = models.CharField(max_length=255)
-    gender = models.CharField(max_length=6)
-    contact_number = models.CharField(max_length=255)
-    citizenship = models.CharField(max_length=255)
-    email = models.CharField(max_length=255)
-    highesteducationattainment = models.CharField(max_length=255)
-    address = models.CharField(max_length=255)
-    occupation = models.CharField(max_length=255, null = True)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    middle_name = models.CharField(max_length=255, null=True, blank=True)
+    nickname = models.CharField(max_length=255,  null=True, blank=True)
+    civil_status = models.CharField(max_length=255, null=True, blank=True)
+    birthdate = models.CharField(max_length=255, null=True, blank=True)
+    gender = models.CharField(max_length=6, null=True, blank=True)
+    contact_number = models.CharField(max_length=255, null=True, blank=True)
+    citizenship = models.CharField(max_length=255, null=True, blank=True)
+    email = models.CharField(max_length=255, null=True, blank=True)
+    highesteducationattainment = models.CharField(max_length=255, null=True, blank=True)
+    address = models.CharField(max_length=255, null=True, blank=True)
+    occupation = models.CharField(max_length=255, null=True, blank=True)
 
 class ChildConflict(models.Model):
     incident_report = models.ForeignKey(IncidentReport, on_delete=models.CASCADE, related_name='child_conflicts')
-    last_name = models.CharField(max_length=255)
-    first_name = models.CharField(max_length=255)
-    middle_name = models.CharField(max_length=255)
-    contact_number = models.CharField(max_length=11)
-    email = models.CharField(max_length=255, null = True)
-    homecontact_number = models.CharField(max_length=255)
-    address = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    middle_name = models.CharField(max_length=255, null=True, blank=True)
+    contact_number = models.CharField(max_length=11, null=True, blank=True)
+    email = models.CharField(max_length=255,  null=True, blank=True)
+    homecontact_number = models.CharField(max_length=255, null=True, blank=True)
+    address = models.CharField(max_length=255, null=True, blank=True)
 
 
 class Notification(models.Model):

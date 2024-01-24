@@ -11,8 +11,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
+import json
 from dotenv import load_dotenv
 from pathlib import Path
+from google.oauth2 import service_account
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -50,6 +52,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'accounts',
     'incident_reports',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -139,6 +142,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        
         'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
@@ -165,10 +169,12 @@ EMAIL_HOST_USER = '7cbb65951f7637'
 EMAIL_HOST_PASSWORD = 'f6fccccdb1be39'
 EMAIL_PORT = '2525'
 
-FRONTEND_URL = 'http://localhost:3000','http://172.24.128.1:3000','exp://192.168.1.40:8081'
+FRONTEND_URL = 'http://localhost:3000','http://172.24.128.1:3000','exp://192.168.1.40:8081','http://192.168.1.40',
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
@@ -179,5 +185,22 @@ STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+
+
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
+
+GCS_CREDENTIALS_JSON = os.getenv("GCS_CREDENTIALS_JSON")
+GS_BUCKET_NAME = 'hera-media'
+
+GCS_CREDENTIALS = service_account.Credentials.from_service_account_info(json.loads(GCS_CREDENTIALS_JSON))
+GS_CREDENTIALS = GCS_CREDENTIALS
+
+DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+
+
+GS_PROJECT_ID = 'windy-skyline-412116'
+GS_AUTO_CREATE_BUCKET = False  # Automatically create bucket if it doesn't exist
+
+# Optionally, specify a custom domain for serving static/media files
+GS_CUSTOM_ENDPOINT = 'https://storage.googleapis.com/hera-media'
