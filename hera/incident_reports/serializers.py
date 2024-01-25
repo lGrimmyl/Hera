@@ -37,7 +37,7 @@ class IncidentReportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = IncidentReport
-        fields = ['user','is_user_victim','status','id', 'media', 'description', 'datetime_reported','closed_at', 'narrative','main_category','subcategories', 'suspects', 'victims', 'child_conflicts', 'jsonData']
+        fields = ['user','is_user_victim','status','id', 'media', 'description', 'datetime_reported','closed_at','longitude','latitude', 'narrative','main_category','subcategories', 'suspects', 'victims', 'child_conflicts', 'jsonData']
         extra_kwargs = {
             'media': {'required': False}
         }

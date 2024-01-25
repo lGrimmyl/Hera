@@ -95,10 +95,15 @@ class ReportCreateView(generics.CreateAPIView):
     serializer_class = IncidentReportSerializer
     permission_classes = [IsAuthenticated]
     parser_classes = (MultiPartParser, JSONParser)
-
+    
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
+        Notification.objects.create(
+            recipient=self.request.user,
+            title="Report Submission Successful",
+            message="Your report has been successfully submitted and is now being processed.",
+            read=False  # Default value is False, but explicitly stating for clarity
+        )
 class ReportDetailView(generics.RetrieveAPIView):
     serializer_class = IncidentReportSerializer
     def get_queryset(self):
@@ -145,10 +150,8 @@ def create_emergency_report(request):
         is_emergency=True,
         latitude=latitude,
         longitude=longitude,
-        subcategory=emergency_subcategory,
-        # Set other necessary default values
     )
-    
+    report.subcategories.set([emergency_subcategory])
     # Additional logic (e.g., notifying the nearest police station)
     
     return Response({'message': 'Emergency report created successfully', 'report_id': report.id})

@@ -29,6 +29,7 @@ class CitizenUserCreateSerializer(UserCreateSerializer):
     highesteducationattainment = serializers.CharField(max_length=255, write_only=True)
     occupation = serializers.CharField(max_length=255, write_only=True)
     Valid_ID = serializers.ImageField(required=False)
+    UserValid = serializers.ImageField(required=False)
     valid_id_type = serializers.PrimaryKeyRelatedField(
         queryset=ValidIDType.objects.all(), 
         allow_null=True, 
@@ -52,9 +53,10 @@ class CitizenUserCreateSerializer(UserCreateSerializer):
             "highesteducationattainment",
             "occupation",
             "Valid_ID",
+            "UserValid",
             "valid_id_type",
         )
-
+        
     def clean_user_data(self, validated_data):
         return{
             'first_name' : validated_data.get('first_name',''),
@@ -72,6 +74,7 @@ class CitizenUserCreateSerializer(UserCreateSerializer):
             'highesteducationattainment' : validated_data.get('highesteducationattainment',''),
             'occupation' : validated_data.get('occupation',''),
             'Valid_ID' : validated_data.get('Valid_ID',''),
+            'UserValid' : validated_data.get('UserValid',''),
             'valid_id_type' : validated_data.get('valid_id_type',''),
             'civil_status' : validated_data.get('civil_status',''),
         }

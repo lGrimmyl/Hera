@@ -17,6 +17,7 @@ class ValidIDType(models.Model):
 class CustomUser(AbstractUser):
     is_police_station = models.BooleanField(default=False)
     Valid_ID = models.ImageField(upload_to='photos/', null=True, blank=True)
+    UserValid = models.ImageField(upload_to='photos/', null=True, blank=True)
     valid_id_type = models.ForeignKey(
         ValidIDType, on_delete=models.SET_NULL, null=True, blank=True)
     middle_name = models.CharField(max_length=255, null=True, blank=True)
