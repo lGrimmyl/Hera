@@ -3,6 +3,11 @@ from rest_framework import serializers
 from .models import IncidentReport, Suspect, Victim, ChildConflict, IncidentSubcategory,IncidentCategory
 import filetype
 import json
+from google.cloud import storage
+from django.conf import settings
+from datetime import datetime, timedelta
+
+expiration_time = datetime.utcnow() + timedelta(hours=1)
 
 class SuspectSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,6 +32,7 @@ class IncidentReportSerializer(serializers.ModelSerializer):
     suspects = SuspectSerializer(many=True, read_only=False, required=False)
     victims = VictimSerializer(many=True, read_only=False, required=False)
     child_conflicts = ChildConflictSerializer(many=True, read_only=False, required=False)
+    media_url = serializers.SerializerMethodField()
     main_category = serializers.SerializerMethodField()
     subcategories = serializers.PrimaryKeyRelatedField(
         many=True, 
@@ -37,18 +43,18 @@ class IncidentReportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = IncidentReport
-        fields = ['user','is_user_victim','status','id', 'media', 'description', 'datetime_reported','closed_at','longitude','latitude', 'narrative','main_category','subcategories', 'suspects', 'victims', 'child_conflicts', 'jsonData']
+        fields = ['user','is_user_victim','status','id', 'media','media_url', 'description', 'datetime_reported','closed_at','longitude','latitude', 'narrative','main_category','subcategories', 'suspects', 'victims', 'child_conflicts', 'jsonData']
         extra_kwargs = {
             'media': {'required': False}
         }
     def validate_media(self, value):
-    # Make sure to read the file (this will be in-memory for uploaded files)
+    
         file_type = filetype.guess(value)
 
         if not file_type:
             raise serializers.ValidationError("Cannot determine file type.")
 
-    # Check if the file's MIME type is allowed
+    
         allowed_types = ['image/jpeg', 'image/png', 'video/mp4']
         if file_type.mime not in allowed_types:
             raise serializers.ValidationError("Unsupported file type.")
@@ -83,6 +89,18 @@ class IncidentReportSerializer(serializers.ModelSerializer):
                 ChildConflict.objects.create(incident_report=incident_report, **child_conflict_data)
 
             return incident_report
+        
+    def get_media_url(self, obj):
+        if obj.media:  
+            
+            storage_client = storage.Client(credentials=settings.GCS_CREDENTIALS)
+            bucket = storage_client.bucket(settings.GS_BUCKET_NAME)
+            blob = bucket.blob(obj.media.name)
+
+            # Generate a signed URL
+            signed_url = blob.generate_signed_url(expiration=expiration_time)
+            return signed_url
+        return None
 
     def get_main_category(self, obj):
         categories = set()
