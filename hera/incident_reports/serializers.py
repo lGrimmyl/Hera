@@ -7,7 +7,6 @@ from google.cloud import storage
 from django.conf import settings
 from datetime import datetime, timedelta
 
-expiration_time = datetime.utcnow() + timedelta(hours=1)
 
 class SuspectSerializer(serializers.ModelSerializer):
     class Meta:
@@ -97,7 +96,7 @@ class IncidentReportSerializer(serializers.ModelSerializer):
             bucket = storage_client.bucket(settings.GS_BUCKET_NAME)
             blob = bucket.blob(obj.media.name)
 
-            # Generate a signed URL
+            expiration_time = datetime.utcnow() + timedelta(hours=1)
             signed_url = blob.generate_signed_url(expiration=expiration_time)
             return signed_url
         return None
