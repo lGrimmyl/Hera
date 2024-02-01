@@ -18,7 +18,13 @@ class IncidentSubcategory(models.Model):
         return self.name
 
 
+class Personnel(models.Model):
+    name = models.CharField(max_length=255)
+    rank = models.CharField(max_length=100)
+    # Add other relevant fields
 
+    def __str__(self):
+        return f"{self.rank} {self.name}"
 
 
 class IncidentReport(models.Model):
@@ -27,6 +33,7 @@ class IncidentReport(models.Model):
         on_delete=models.CASCADE,
         null=False, 
         related_name='incident_reports')
+    dispatched_personnel = models.ManyToManyField(Personnel, blank=True)
     is_user_victim = models.BooleanField(default=False)
     is_emergency = models.BooleanField(default=False)
     media = models.FileField(upload_to='incident_media/', blank=True, null=True)

@@ -4,7 +4,7 @@ from accounts.permissions import IsPoliceStationUser
 from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework import generics
-from .models import IncidentReport, Suspect, Victim, ChildConflict, Notification, IncidentSubcategory
+from .models import IncidentReport, Suspect, Victim, ChildConflict, Notification, IncidentSubcategory, Personnel
 from .serializers import IncidentReportSerializer, SuspectSerializer, VictimSerializer, ChildConflictSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser,JSONParser
@@ -136,7 +136,7 @@ def create_emergency_report(request):
     user = request.user
     latitude = request.data.get('latitude')
     longitude = request.data.get('longitude')
-
+    subcategory_ids = request.data.get('subcategories', [])
     is_emergency = request.data.get('is_emergency', False)
     if is_emergency:
         try:
@@ -150,11 +150,15 @@ def create_emergency_report(request):
         is_emergency=True,
         latitude=latitude,
         longitude=longitude,
+        
     )
-    report.subcategories.set([emergency_subcategory])
-    # Additional logic (e.g., notifying the nearest police station)
+    if subcategory_ids:
+            subcategories = IncidentSubcategory.objects.filter(id__in=subcategory_ids)
+            report.subcategories.set(subcategories)
+
+    serializer = IncidentReportSerializer(report)
     
-    return Response({'message': 'Emergency report created successfully', 'report_id': report.id})
+    return Response(serializer.data)
 
 class EmergencyReportList(APIView):
     def get(self, request):
@@ -169,26 +173,37 @@ class EmergencyReportList(APIView):
 @api_view(['PATCH'])
 @permission_classes([IsPoliceStationUser])
 def update_report_status(request, report_id):
-
     try:
         report = IncidentReport.objects.get(id=report_id)
     except IncidentReport.DoesNotExist:
         return Response({'error': 'Incident report not found'}, status=404)
 
-
     new_status = request.data.get('status')
+    dispatched_personnel_ids = request.data.get('dispatched_personnel', [])
+
     if new_status in dict(IncidentReport.STATUS_CHOICES):
         report.status = new_status
+
+        # Handle dispatched personnel for 'In Progress' status
+        if new_status == 'In Progress' and dispatched_personnel_ids:
+            personnel = Personnel.objects.filter(id__in=dispatched_personnel_ids)
+            report.dispatched_personnel.set(personnel)
+
+            # Include personnel details in the notification
+            personnel_names = ', '.join([str(p) for p in personnel])
+            notification_message = f'Your incident report status has been updated to {report.get_status_display()}. Dispatched personnel: {personnel_names}'
+        else:
+            notification_message = f'Your incident report status has been updated to {report.get_status_display()}.'
+
         report.save()
        
         Notification.objects.create(
             recipient=report.user,
             title='Incident Report Status Updated',
-            message=f'Your incident report status has been updated to {report.get_status_display()}.'
+            message=notification_message
         )
         return Response({'message': 'Report status updated successfully'})
     else:
-
         return Response({'error': 'Invalid status'}, status=400)
     
 @api_view(['GET'])    

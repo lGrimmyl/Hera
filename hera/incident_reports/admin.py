@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import IncidentReport, Suspect, Victim, ChildConflict, IncidentCategory, IncidentSubcategory
+from .models import IncidentReport, Suspect, Victim, ChildConflict, IncidentCategory, IncidentSubcategory, Personnel
 # Register your models here.
 
 
@@ -21,3 +21,5 @@ admin.site.register(IncidentCategory)
 admin.site.register(IncidentSubcategory)
 
 admin.site.register(IncidentReport, IncidentReportAdmin)
+
+admin.site.register(Personnel)
