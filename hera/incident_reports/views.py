@@ -137,12 +137,7 @@ def create_emergency_report(request):
     latitude = request.data.get('latitude')
     longitude = request.data.get('longitude')
     subcategory_ids = request.data.get('subcategories', [])
-    is_emergency = request.data.get('is_emergency', False)
-    if is_emergency:
-        try:
-            emergency_subcategory = IncidentSubcategory.objects.get(id=9)
-        except IncidentSubcategory.DoesNotExist:
-            return Response({'error': 'Emergency subcategory not found'}, status=404)
+
     
     # Create the emergency report
     report = IncidentReport.objects.create(
