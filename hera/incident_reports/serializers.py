@@ -1,12 +1,17 @@
 from django.db import transaction
 from rest_framework import serializers
-from .models import IncidentReport, Suspect, Victim, ChildConflict, IncidentSubcategory,IncidentCategory
+from .models import IncidentReport, Suspect, Victim, ChildConflict, IncidentSubcategory,IncidentCategory, Personnel
 import filetype
 import json
 from google.cloud import storage
 from django.conf import settings
 from datetime import datetime, timedelta
 
+
+class PersonnelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Personnel
+        fields = ['id', 'name', 'rank']
 
 class SuspectSerializer(serializers.ModelSerializer):
     class Meta:
@@ -31,6 +36,7 @@ class IncidentReportSerializer(serializers.ModelSerializer):
     suspects = SuspectSerializer(many=True, read_only=False, required=False)
     victims = VictimSerializer(many=True, read_only=False, required=False)
     child_conflicts = ChildConflictSerializer(many=True, read_only=False, required=False)
+    dispatched_personnel = PersonnelSerializer(many=True, read_only=True)
     media_url = serializers.SerializerMethodField()
     main_category = serializers.SerializerMethodField()
     subcategories = serializers.PrimaryKeyRelatedField(
@@ -42,7 +48,7 @@ class IncidentReportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = IncidentReport
-        fields = ['user','is_emergency','is_user_victim','status','id', 'media','media_url', 'description', 'datetime_reported','closed_at','longitude','latitude', 'narrative','main_category','subcategories', 'suspects', 'victims', 'child_conflicts', 'jsonData']
+        fields = ['user','is_emergency','is_user_victim','status','dispatched_personnel','id', 'media','media_url', 'description', 'datetime_reported','closed_at','longitude','latitude', 'narrative','main_category','subcategories', 'suspects', 'victims', 'child_conflicts', 'jsonData']
         extra_kwargs = {
             'media': {'required': False}
         }
